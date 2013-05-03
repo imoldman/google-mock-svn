@@ -134,20 +134,30 @@ if (gmock_build_tests)
   cxx_library(gmock_main_no_rtti "${cxx_no_rtti}"
     "${gtest_dir}/src/gtest-all.cc" src/gmock-all.cc src/gmock_main.cc)
 
-  cxx_library(gmock_main_use_own_tuple "${cxx_use_own_tuple}"
-    "${gtest_dir}/src/gtest-all.cc" src/gmock-all.cc src/gmock_main.cc)
-
   cxx_test_with_flags(gmock-more-actions_no_exception_test "${cxx_no_exception}"
     gmock_main_no_exception test/gmock-more-actions_test.cc)
 
   cxx_test_with_flags(gmock_no_rtti_test "${cxx_no_rtti}"
     gmock_main_no_rtti test/gmock-spec-builders_test.cc)
 
-  cxx_test_with_flags(gmock_use_own_tuple_test "${cxx_use_own_tuple}"
-    gmock_main_use_own_tuple test/gmock-spec-builders_test.cc)
-
   cxx_shared_library(shared_gmock_main "${cxx_default}"
     "${gtest_dir}/src/gtest-all.cc" src/gmock-all.cc src/gmock_main.cc)
+
+  if (NOT MSVC OR MSVC_VERSION LESS 1600)
+    # The C++ Standard specifies tuple_element<int, class>.
+    # Yet MSVC 10's <utility> declares tuple_element<size_t, class>.
+    # That declaration conflicts with our own standard-conforming
+    # tuple implementation.  Therefore using our own tuple with
+    # MSVC 10 doesn't compile.
+    #
+    # in MSVC 11, tuple is build in std namespace, so we remove
+    # internal tuple
+    cxx_library(gmock_main_use_own_tuple "${cxx_use_own_tuple}"
+    "${gtest_dir}/src/gtest-all.cc" src/gmock-all.cc src/gmock_main.cc)
+
+    cxx_test_with_flags(gmock_use_own_tuple_test "${cxx_use_own_tuple}"
+    gmock_main_use_own_tuple test/gmock-spec-builders_test.cc)
+  endif()
 
   # Tests that a binary can be built with Google Mock as a shared library.  On
   # some system configurations, it may not possible to run the binary without
