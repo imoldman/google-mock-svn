@@ -105,7 +105,6 @@ if (gmock_build_tests)
   cxx_test(gmock-cardinalities_test gmock_main)
   cxx_test(gmock_ex_test gmock_main)
   cxx_test(gmock-generated-actions_test gmock_main)
-  cxx_test(gmock-generated-function-mockers_test gmock_main)
   cxx_test(gmock-generated-internal-utils_test gmock_main)
   cxx_test(gmock-generated-matchers_test gmock_main)
   cxx_test(gmock-internal-utils_test gmock_main)
@@ -116,6 +115,10 @@ if (gmock_build_tests)
   cxx_test(gmock-spec-builders_test gmock_main)
   cxx_test(gmock_link_test gmock_main test/gmock_link2_test.cc)
   cxx_test(gmock_test gmock_main)
+
+  # gmock has some bug about const parameter, so we disable this warning
+  cxx_test_with_flags(gmock-generated-function-mockers_test "${cxx_default} /wd4373"
+    gmock_main "test/gmock-generated-function-mockers_test.cc")
 
   if (CMAKE_USE_PTHREADS_INIT)
     cxx_test(gmock_stress_test gmock)

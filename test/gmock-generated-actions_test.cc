@@ -374,7 +374,7 @@ class SubstractAction : public ActionInterface<int(int, int)> {  // NOLINT
 };
 
 TEST(WithArgsTest, NonInvokeAction) {
-  Action<int(const string&, int, int)> a =  // NOLINT
+  Action<int(const char*, int, int)> a =  // NOLINT
       WithArgs<2, 1>(MakeAction(new SubstractAction));
   EXPECT_EQ(8, a.Perform(make_tuple(CharPtr("hi"), 2, 10)));
 }
